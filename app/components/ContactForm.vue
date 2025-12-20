@@ -30,13 +30,13 @@
 <template>
 	<UForm :validate="validate" :state="state" @submit="onSubmit">
 		<UFormField label="Nom" name="name" required>
-			<UInput v-model="state.name" type="text" color="success" variant="none" placeholder="Your name" class="outline outline-solid rounded-sm p-1 my-2"/>
+			<UInput v-model="state.name" type="text" color="success" variant="outline" placeholder="Your name" class="w-full outline rounded-sm p-1 my-2"/>
 		</UFormField>
 		<UFormField label="Email" name="email" required>
-			<UInput v-model="state.email" type="email" placeholder="Your email" class="outline outline-solid rounded-sm p-1 my-2"/>
+			<UInput v-model="state.email" type="email" color="success" variant="outline" placeholder="Your email" class="w-full outline rounded-sm p-1 my-2 focus:outline-2 focus:outline-blue-500"/>
 		</UFormField>
 		<UFormField label="Message" name="message" required>
-			<UInput v-model="state.message" type="text" size="xl" placeholder="Your message" class="outline outline-solid rounded-sm p-1 my-2"/>
+			<UTextarea v-model="state.message" :rows="10" autoresize placeholder="Your message" class="w-full outline outline-solid rounded-sm p-1 my-2"/>
 		</UFormField>
 		<UButton type="submit" variant="outline" color="success" class="outline outline-solid rounded-md p-1 my-2">
 			Submit

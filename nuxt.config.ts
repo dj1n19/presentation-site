@@ -56,11 +56,14 @@ export default defineNuxtConfig({
   // },
 
   // SEO & Performance
+  // routeRules: {
+  //   '/': { prerender: true },
+  //   '/about': { prerender: true },
+  //   '/services': { prerender: true },
+  //   '/portfolio': { prerender: true },
+  //   '/contact': { prerender: true }
+  // }
   routeRules: {
-    '/': { prerender: true },
-    '/about': { prerender: true },
-    '/services': { prerender: true },
-    '/portfolio': { prerender: true },
-    '/contact': { prerender: true }
+    '/': { prerender: true }
   }
 })
