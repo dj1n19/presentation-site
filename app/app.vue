@@ -20,7 +20,7 @@
 						</p>
 						<!-- BUTTON CONTAINER: -->
 						<div class="flex flex-wrap gap-4">
-							<UButton to="#about" color="gray" variant="outline" size="lg" icon="i-heroicons-briefcase"
+							<UButton to="#about" color="gray" variant="outline" size="lg" icon="i-heroicons-user"
 								class="outline-solid rounded-md p-2">
 								About Me
 							</UButton>
@@ -83,18 +83,11 @@
 						</p>
 					</div>
 				</div>
-				<!-- CALL-TO-ACTION BUTTON: -->
-				<div class="text-center mt-12">
-					<UButton to="/about" color="gray" size="lg" variant="outline"
-						trailing-icon="i-heroicons-arrow-right">
-						Learn More About Me
-					</UButton>
-				</div>
 			</div>
 		</section>
 
 		<!-- SERVICES SECTION -->
-		<section class="py-20 bg-gray-50" id="services">
+		<section class="py-20 bg-white" id="services">
 			<div class="container mx-auto px-4 max-w-6xl">
 				<!-- SECTION HEADER -->
 				<div class="text-center mb-12">
@@ -106,7 +99,7 @@
 					</p>
 				</div>
 				<!-- SERVICES GRID: -->
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12 max-w-6xl mx-auto">
 					<UCard v-for="service in services" :key="service.title"
 						class="hover:shadow-md transition-shadow border border-gray-200">
 						<!-- CARD HEADER SLOT: -->
@@ -128,11 +121,35 @@
 						</p>
 					</UCard>
 				</div>
-				<!-- SERVICES CTA BUTTON -->
-				<div class="text-center mt-12">
-					<UButton to="/services" color="gray" size="lg" trailing-icon="i-heroicons-arrow-right">
-						View All Services
-					</UButton>
+				<!-- DISCLAIMER -->
+				<div class="text-center mb-12">
+					<h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+						Disclaimer
+					</h3>
+					<p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+						Le service de gestion administrative proposé est un service d'assistance et d'accompagnement administratif destiné aux particuliers.
+						Le ou la gestionnaire administratif·ve n'est pas avocat·e, notaire, huissier de justice ou conseiller juridique agréé.
+					</p>
+					<p class="text-lg text-left text-gray-600 max-w-2xl mx-auto leading-relaxed">
+						À ce titre :
+					</p>
+						<ul class="list-disc list-inside text-left text-lg text-gray-600 max-w-2xl mb-4 mx-auto leading-relaxed">
+							<li>aucun conseil juridique personnalisé ou avis légal ne peut être fourni</li>
+							<li>aucune représentation juridique devant les tribunaux n'est assurée</li>
+							<li>aucune interprétation officielle des lois ou règlements ne peut être donnée</li>
+						</ul>
+					<p class="text-lg text-left text-gray-600 max-w-2xl mx-auto leading-relaxed">
+						L'accompagnement consiste à :
+					</p>
+						<ul class="list-disc list-inside text-left text-lg text-gray-600 max-w-2xl mb-4 mx-auto leading-relaxed">
+							<li>aider à comprendre des courriers et démarches administratives</li>
+							<li>assister dans la constitution et le suivi de dossiers</li>
+							<li>rédiger des documents administratifs sur base des informations fournies par le client</li>
+							<li>faciliter les échanges avec les organismes et institutions concernés</li>
+						</ul>
+					<p class="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
+						En cas de litige juridique complexe, de procédure judiciaire ou de besoin de conseil légal, il est recommandé de faire appel à un avocat ou à un professionnel du droit compétent.
+					</p>
 				</div>
 			</div>
 		</section>
@@ -271,34 +288,34 @@ const strengths = [
 */
 const services = [
 	{
-		icon: 'i-heroicons-clipboard-document-list',
-		title: 'Démarches administratives',
-		description: 'gestion des relations avec les administrations.'
+		icon: 'i-heroicons-building-library',
+		title: 'Démarches auprès des services publics',
+		description: 'Accompagnement dans les démarches communales, fiscales, sociales ou liées à l’emploi (allocations, attestations, changements de situation, etc.).'
 	},
 	{
 		icon: 'i-heroicons-calendar',
-		title: 'Organisation personnelle',
-		description: 'planification de rendez-vous'
+		title: 'Accompagnement des personnes en difficulté',
+		description: 'Soutien administratif pour les personnes âgées, isolées, en situation de précarité ou dépassées par les démarches.'
 	},
 	{
 		icon: 'i-heroicons-document-text',
-		title: 'Gestion des documents',
-		description: 'Obtention, completion et envoie de documents administratifs.'
+		title: 'Rédaction et mise en forme de courriers',
+		description: 'Rédaction de lettres officielles, contestations, demandes, réclamations ou réponses à des administrations.'
 	},
 	{
 		icon: 'i-heroicons-user-group',
-		title: 'Scheduling & Planning',
-		description: '[Brief description of scheduling services]'
+		title: 'Relations avec propriétaires',
+		description: 'Assistance dans les échanges administratifs liés au logement (baux, courriers, litiges administratifs simples).'
 	},
 	{
-		icon: 'i-heroicons-chart-pie',
-		title: 'Budget Management',
-		description: '[Brief description of budget management services]'
+		icon: 'i-heroicons-clipboard-document-list',
+		title: 'Assistance administrative générale',
+		description: 'Aide ponctuelle ou régulière pour comprendre, compléter et transmettre des documents administratifs.'
 	},
 	{
 		icon: 'i-heroicons-light-bulb',
-		title: 'Process Improvement',
-		description: '[Brief description of process improvement services]'
+		title: 'Accompagnement des personnes en difficulté',
+		description: 'Soutien administratif pour les personnes âgées, isolées, en situation de précarité ou dépassées par les démarches.'
 	}
 ]
 
