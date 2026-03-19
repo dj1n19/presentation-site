@@ -40,6 +40,7 @@ export default defineNuxtConfig({
   routeRules: {
     // '/': { redirect: '/under-construction' },
     // '/under-construction': { prerender: true },
-    '/': { prerender: true }
+    '/': { prerender: true },
+    '/cookies-policy': { prerender: true }
   }
 })

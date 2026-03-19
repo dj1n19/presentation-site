@@ -156,6 +156,7 @@
 
 		<!-- TESTIMONIALS SECTION -->
 			<Testimonials />
+			<TestimonialForm />
 
 		<!-- CONTACT FORM -->
 		<section id="contact" class="py-20 bg-gray-50 border-b border-gray-100">
