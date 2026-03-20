@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 401, message: "Not authenticated" })
     }
 
-    const user = await db.select().from(users).where(eq(users.id, session.data.id)).get()
+    const user = await db.select().from(users).where(eq(users.id, session.data.userId)).get()
 
     if (!user) {
         throw createError({ statusCode: 401, message: "User not found" })
