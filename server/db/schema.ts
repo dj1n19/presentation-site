@@ -12,3 +12,17 @@ export const users = sqliteTable('users', {
 
 export type User = typeof users.$inferSelect
 export type NewUser = typeof users.$inferInsert
+
+export const messages = sqliteTable('messages', {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    firstName: text('firstName').notNull(),
+    lastName: text('lastName').notNull(),
+    email: text('email').notNull(),
+    phone: text('phone').notNull(),
+    message: text('message').notNull(),
+    read: integer('read', { mode: 'boolean' }).notNull().default(false),
+    createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+})
+
+export type Message = typeof messages.$inferSelect
+export type NewMessage = typeof messages.$inferInsert
