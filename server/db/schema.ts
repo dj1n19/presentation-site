@@ -40,4 +40,16 @@ export const testimonials = sqliteTable('testimonials', {
 })
 
 export type Testimonial = typeof testimonials.$inferSelect
-export type NewTestimonials = typeof testimonials.$inferInsert
+export type NewTestimonial = typeof testimonials.$inferInsert
+
+export const faq_entries = sqliteTable('faq_entries', {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    question: text('question').notNull(),
+    answer: text('answer').notNull(),
+    category: text('category', { enum: ['general'] }).notNull(),
+    visible: integer('visible', { mode: 'boolean' }).notNull().default(true),
+    createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+})
+
+export type FaqEntry = typeof faq_entries.$inferSelect
+export type NewFaqEntry = typeof faq_entries.$inferInsert
