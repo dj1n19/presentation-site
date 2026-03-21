@@ -26,3 +26,18 @@ export const messages = sqliteTable('messages', {
 
 export type Message = typeof messages.$inferSelect
 export type NewMessage = typeof messages.$inferInsert
+
+export const testimonials = sqliteTable('testimonials', {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    username: text('username').notNull().unique(),
+    testimonial: text('testimonial').notNull(),
+    ratingContact: integer('ratingContact').notNull(),
+    ratingPayment: integer('ratingPayment').notNull(),
+    ratingFollowup: integer('ratingFollowup').notNull(),
+    ratingEfficiency: integer('ratingEfficiency').notNull(),
+    status: text('status', { enum: ['pending', 'approved', 'rejected'] }).notNull().default('pending'),
+    createdAt: integer('createdAt', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+})
+
+export type Testimonial = typeof testimonials.$inferSelect
+export type NewTestimonials = typeof testimonials.$inferInsert
