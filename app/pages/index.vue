@@ -154,10 +154,6 @@
 			</div>
 		</section>
 
-		<!-- TESTIMONIALS SECTION -->
-			<Testimonials />
-			<TestimonialForm />
-
 		<!-- CONTACT FORM -->
 		<section id="contact" class="py-20 bg-gray-50 border-b border-gray-100">
 			<div class="container mx-auto px-4 max-w-6xl items-center">
@@ -175,7 +171,23 @@
 							<p> 10€/h</p>
 						</div>
 						<div class="p-2 ml-4 flex-auto">
-							<ContactForm></ContactForm>
+							<UiContactForm />
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- TESTIMONIAL FORM -->
+		<section id="testimonial" class="py-20 bg-gray-50 border-b border-gray-100">
+			<div class="container mx-auto px-4 max-w-6xl items-center">
+				<div class="text-center mb-12">
+					<h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+						Témoignage
+					</h2>
+					<div class="flex mx-auto">
+						<div class="p-2 ml-4 flex-auto">
+							<UiTestimonialForm />
 						</div>
 					</div>
 				</div>
@@ -204,6 +216,8 @@
 </template>
 
 <script setup>
+import TestimonialForm from '~/components/ui/TestimonialForm.vue';
+
 /* 
   SCRIPT SECTION (COMPOSITION API):
   This is where the JavaScript logic lives. Think of it as your "main()" function.

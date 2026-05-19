@@ -1,4 +1,4 @@
 <template>
   <NuxtPage />
-  <CookieBanner />
+  <UiCookieBanner />
 </template>
