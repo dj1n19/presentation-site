@@ -1,22 +1,29 @@
 import { db } from '../../db/index'
 import { messages } from '../../db/schema'
+import { z } from 'zod'
+
+const schema = z.object({
+    firstName: z.string().min(1, ""),
+    lastName: z.string().min(1, ""),
+    email: z.email("email invalide"),
+    phone: z.e164("Numéro invalide"),
+    message: z.string().min(1, "")
+})
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
 
-    if (!body.firstName || !body.lastName || !body.email || !body.phone || !body.message) {
-        throw createError({ statusCode: 400, message: 'Name, email, phone and message are required.' })
+    const result = schema.safeParse(body)
+    if (!result.success) {
+        throw createError({
+            statusCode: 400,
+            message: result.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
+        })
     }
 
     const [newMessage] = await db
         .insert(messages)
-        .values({
-            firstName: body.firstName,
-            lastName: body.lastName,
-            email: body.email,
-            phone: body.phone,
-            message: body.message
-        })
+        .values(result.data)
         .returning()
 
     setResponseStatus(event, 201)

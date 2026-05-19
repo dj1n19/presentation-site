@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
     })
 
     if (!session.data.userId || session.data.role !== 'admin') {
-        throw createError({ statusCode: 402, message: 'Access forbidden'})
+        throw createError({ statusCode: 403, message: 'Access forbidden'})
     }
 
     const id = Number(getRouterParam(event, 'id'))

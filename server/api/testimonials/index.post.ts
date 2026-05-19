@@ -1,28 +1,30 @@
 import { db } from '../../db/index'
 import { testimonials } from '../../db/schema'
+import { z } from 'zod'
+
+const schema = z.object({
+    username: z.string().min(1, ""),
+    testimonial: z.string().min(1, ""),
+    ratingContact: z.number().max(5, "Les notations doivent être comprise entre 1 et 5."),
+    ratingPayment: z.number().max(5, "Les notations doivent être comprise entre 1 et 5."),
+    ratingFollowup: z.number().max(5, "Les notations doivent être comprise entre 1 et 5."),
+    ratingEfficiency: z.number().max(5, "Les notations doivent être comprise entre 1 et 5.")
+})
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
 
-    if (!body.username
-        || !body.testimonial
-        || !body.ratingContact
-        || !body.ratingPayment
-        || !body.ratingFollowup
-        || !body.ratingEfficiency) {
-        throw createError({ statusCode: 400, message: 'Name, testimonials and ratings are required' })
+    const result = schema.safeParse(body)
+    if (!result.success) {
+        throw createError({
+            statusCode: 400,
+            message: result.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
+        })
     }
 
     const [newTestimonial] = await db
         .insert(testimonials)
-        .values({
-            username: body.username,
-            testimonial: body.testimonial,
-            ratingContact: body.ratingContact,
-            ratingPayment: body.ratingPayment,
-            ratingFollowup: body.ratingFollowup,
-            ratingEfficiency: body.ratingEfficiency
-        })
+        .values(result.data)
         .returning()
 
     setResponseStatus(event, 201)
