@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
         password: process.env.SESSION_SECRET!
     })
 
-    if (!session.data.userId && session.data.role === 'admin') {
+    if (session.data.userId && session.data.role === 'admin') {
         return await db.select().from(faq_entries)
     }
 
