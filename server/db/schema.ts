@@ -15,6 +15,7 @@ export type NewUser = typeof users.$inferInsert
 
 export const messages = sqliteTable('messages', {
     id: integer('id').primaryKey({ autoIncrement: true }),
+    userId: integer('userId').references(() => users.id, { onDelete: 'set null' }),
     firstName: text('firstName').notNull(),
     lastName: text('lastName').notNull(),
     email: text('email').notNull(),
@@ -29,6 +30,7 @@ export type NewMessage = typeof messages.$inferInsert
 
 export const testimonials = sqliteTable('testimonials', {
     id: integer('id').primaryKey({ autoIncrement: true }),
+    userId: integer('userId').references(() => users.id, { onDelete: 'set null' }),
     username: text('username').notNull().unique(),
     testimonial: text('testimonial').notNull(),
     ratingContact: integer('ratingContact').notNull(),
@@ -53,3 +55,14 @@ export const faq_entries = sqliteTable('faq_entries', {
 
 export type FaqEntry = typeof faq_entries.$inferSelect
 export type NewFaqEntry = typeof faq_entries.$inferInsert
+
+export const documents = sqliteTable('documents', {
+    id: integer('id').primaryKey({ autoIncrement: true }),
+    name: text('name').notNull(),          // display name shown to user
+    filename: text('filename').notNull(),  // actual filename on disk
+    mimeType: text('mimeType').notNull(),  // e.g. 'application/pdf'
+    uploadedAt: integer('uploadedAt', { mode: 'timestamp' }).notNull().$defaultFn(() => new Date())
+})
+ 
+export type Document = typeof documents.$inferSelect
+export type NewDocument = typeof documents.$inferInsert

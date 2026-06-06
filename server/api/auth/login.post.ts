@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
         userId: user.id,
         role: user.role
     })
-
+    console.log(session.data)
     return {
         id: user.id,
         username: user.username,

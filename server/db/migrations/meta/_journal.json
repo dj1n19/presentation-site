@@ -8,6 +8,13 @@
       "when": 1774106860567,
       "tag": "0000_fearless_invaders",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1779202322598,
+      "tag": "0001_equal_prism",
+      "breakpoints": true
     }
   ]
 }

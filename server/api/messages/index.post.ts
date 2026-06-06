@@ -1,3 +1,9 @@
+// server/api/messages/index.post.ts
+//
+// Same as before, but now we also try to read the session.
+// If the user is logged in, we attach their userId to the message.
+// If not (anonymous visitor), userId stays null — that's fine.
+
 import { db } from '../../db/index'
 import { messages } from '../../db/schema'
 import { z } from 'zod'
@@ -21,9 +27,15 @@ export default defineEventHandler(async (event) => {
         })
     }
 
+    const session = await useSession(event, {
+        password: process.env.SESSION_SECRET!
+    })
+
+    const userId = session.data.userId ?? null
+
     const [newMessage] = await db
         .insert(messages)
-        .values(result.data)
+        .values({ ...result.data, userId })
         .returning()
 
     setResponseStatus(event, 201)

@@ -2,6 +2,7 @@ import { db } from '../../db/index'
 import { users } from '../../db/schema'
 
 export default defineEventHandler(async (event) => {
+    console.log("COUILLE")
     const session = await useSession(event, {
         password: process.env.SESSION_SECRET!
     })
