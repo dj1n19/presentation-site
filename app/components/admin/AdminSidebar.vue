@@ -130,6 +130,50 @@
       </Transition>
     </div>
 
+    <!-- ── LOGOUT BUTTON ─────────────────────────────────────────────────── -->
+    <!--
+      This button calls logout() defined in <script setup> below.
+      
+      In collapsed mode:  icon only, tooltip via `title` attribute.
+      In expanded mode:   icon + "Déconnexion" label.
+      
+      :disabled prevents double-clicks while the POST request is in flight.
+      The `loggingOut` ref tracks that state (like a bool flag in C++).
+      
+      Color intent: red-tinted on hover to signal "destructive action",
+      but subtle by default so it doesn't grab attention away from navigation.
+    -->
+    <div class="px-2.5 pb-2">
+      <button
+        :title="collapsed ? 'Déconnexion' : undefined"
+        :disabled="loggingOut"
+        class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded
+               text-[13px] font-medium tracking-[0.01em]
+               whitespace-nowrap overflow-hidden
+               text-[#6b6860] cursor-pointer
+               border border-transparent
+               hover:bg-red-500/10 hover:text-red-400 hover:border-red-500/20
+               disabled:opacity-40 disabled:cursor-not-allowed
+               transition-colors duration-200"
+        @click="logout"
+      >
+        <!-- Spinner while logging out, arrow-right-on-rectangle when idle -->
+        <UIcon
+          :name="loggingOut ? 'i-heroicons-arrow-path' : 'i-heroicons-arrow-right-on-rectangle'"
+          :class="['shrink-0 w-[18px] h-[18px]', loggingOut && 'animate-spin']"
+        />
+
+        <Transition
+          enter-active-class="transition-[opacity,transform] duration-150 ease-out"
+          leave-active-class="transition-[opacity,transform] duration-150 ease-in"
+          enter-from-class="opacity-0 -translate-x-2"
+          leave-to-class="opacity-0 -translate-x-2"
+        >
+          <span v-if="!collapsed">{{ loggingOut ? 'Déconnexion…' : 'Déconnexion' }}</span>
+        </Transition>
+      </button>
+    </div>
+
     <!-- ── COLLAPSE TOGGLE ───────────────────────────────────────────────── -->
     <button
       :title="collapsed ? 'Déplier le menu' : 'Réduire le menu'"
@@ -153,8 +197,6 @@
 </template>
 
 <script setup lang="ts">
-import LogoutButton from '../ui/LogoutButton.vue';
-
 const props = withDefaults(
   defineProps<{
     collapsed: boolean
@@ -171,7 +213,34 @@ defineEmits<{
 }>()
 
 const route = useRoute()
+const router = useRouter()
+const toast = useToast()
 
+// ── Logout ────────────────────────────────────────────────────────────────────
+/*
+  loggingOut is a reactive boolean (like bool loggingOut = false in C++).
+  We set it to true while the POST is in flight so the button shows a spinner
+  and the :disabled attribute prevents double-clicks.
+*/
+const loggingOut = ref(false)
+
+async function logout() {
+  loggingOut.value = true
+  try {
+    await $fetch('/api/auth/logout', { method: 'POST' })
+    await router.push('/')
+  } catch (e: any) {
+    toast.add({
+      title: 'Erreur',
+      description: e?.data?.message ?? 'Déconnexion échouée.',
+      color: 'error',
+    })
+  } finally {
+    loggingOut.value = false
+  }
+}
+
+// ── Nav items ─────────────────────────────────────────────────────────────────
 const navItems = computed(() => [
   {
     to:    '/admin',

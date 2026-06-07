@@ -1,8 +1,4 @@
 <template>
-  <!-- The aside is the sidebar container.
-       :class applies multiple Tailwind classes conditionally.
-       When collapsed=true, width shrinks from w-60 to w-16.
-       transition-[width] animates only the width change smoothly. -->
   <aside
     :class="[
       'fixed inset-y-0 left-0 flex flex-col z-[100] overflow-hidden',
@@ -24,12 +20,6 @@
         GA
       </div>
 
-      <!--
-        <Transition> is Vue's built-in animation wrapper.
-        enter-from-class / leave-to-class define start/end states.
-        Vue automatically adds/removes these classes during the transition.
-        This makes the label text slide in/out when collapsing.
-      -->
       <Transition
         enter-active-class="transition-[opacity,transform] duration-150 ease-out"
         leave-active-class="transition-[opacity,transform] duration-150 ease-in"
@@ -51,11 +41,6 @@
     <div class="shrink-0 h-px bg-gray-100" aria-hidden="true" />
 
     <!-- ── NAVIGATION ────────────────────────────────────────────────────── -->
-    <!--
-      NuxtLink renders as an <a> tag but uses the Vue Router under the hood.
-      It prevents full page reloads (like SPA navigation).
-      :title shows a tooltip in collapsed mode (the label is hidden).
-    -->
     <nav class="flex-1 overflow-y-auto py-2 px-2.5" aria-label="Navigation utilisateur">
       <NuxtLink
         v-for="item in navItems"
@@ -72,7 +57,6 @@
             : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800',
         ]"
       >
-        <!-- Active indicator bar on the left edge -->
         <span
           v-if="isActive(item.to)"
           class="absolute left-0 top-[20%] bottom-[20%] w-0.5 rounded-r bg-gray-800"
@@ -96,11 +80,6 @@
     <div class="shrink-0 h-px bg-gray-100" aria-hidden="true" />
 
     <!-- ── USER BLOCK ────────────────────────────────────────────────────── -->
-    <!--
-      We show the first letter of the username as an avatar.
-      username comes from the prop passed by the layout.
-      .charAt(0).toUpperCase() = first character, uppercased.
-    -->
     <div class="flex items-center gap-2.5 px-4 py-3 overflow-hidden whitespace-nowrap">
       <div
         class="shrink-0 w-8 h-8 rounded-full flex items-center justify-center
@@ -126,13 +105,43 @@
       </Transition>
     </div>
 
-    <!-- ── COLLAPSE TOGGLE ───────────────────────────────────────────────── -->
+    <!-- ── LOGOUT BUTTON ─────────────────────────────────────────────────── -->
     <!--
-      $emit('update:collapsed', !collapsed) is Vue's way of notifying the parent
-      that the collapsed value should change. The parent uses v-model:collapsed
-      which wires this up automatically.
-      Think of it like a callback: parent passes "onChange" → child calls it.
+      Same structure as the admin version but using the light color scheme.
+      Red hover tint is lighter (red-50 bg, red-500 text) to match the
+      overall softer look of the user sidebar.
     -->
+    <div class="px-2.5 pb-2">
+      <button
+        :title="collapsed ? 'Déconnexion' : undefined"
+        :disabled="loggingOut"
+        class="w-full flex items-center gap-2.5 px-2.5 py-2 rounded
+               text-[13px] font-medium tracking-[0.01em]
+               whitespace-nowrap overflow-hidden
+               text-gray-400 cursor-pointer
+               border border-transparent
+               hover:bg-red-50 hover:text-red-500 hover:border-red-100
+               disabled:opacity-40 disabled:cursor-not-allowed
+               transition-colors duration-200"
+        @click="logout"
+      >
+        <UIcon
+          :name="loggingOut ? 'i-heroicons-arrow-path' : 'i-heroicons-arrow-right-on-rectangle'"
+          :class="['shrink-0 w-[18px] h-[18px]', loggingOut && 'animate-spin']"
+        />
+
+        <Transition
+          enter-active-class="transition-[opacity,transform] duration-150 ease-out"
+          leave-active-class="transition-[opacity,transform] duration-150 ease-in"
+          enter-from-class="opacity-0 -translate-x-2"
+          leave-to-class="opacity-0 -translate-x-2"
+        >
+          <span v-if="!collapsed">{{ loggingOut ? 'Déconnexion…' : 'Déconnexion' }}</span>
+        </Transition>
+      </button>
+    </div>
+
+    <!-- ── COLLAPSE TOGGLE ───────────────────────────────────────────────── -->
     <button
       :title="collapsed ? 'Déplier le menu' : 'Réduire le menu'"
       :aria-expanded="!collapsed"
@@ -155,14 +164,6 @@
 </template>
 
 <script setup lang="ts">
-/*
-  defineProps — declares what data the parent passes in.
-  withDefaults — provides fallback values when the parent doesn't pass them.
-  
-  In C++ terms: this is the constructor signature of this component.
-  collapsed:  bool   — is the sidebar narrow or wide?
-  username:   string — shown in the user block at the bottom.
-*/
 const props = withDefaults(
   defineProps<{
     collapsed: boolean
@@ -174,37 +175,49 @@ const props = withDefaults(
   }
 )
 
-/*
-  defineEmits — declares the events this component can fire upward.
-  'update:collapsed' is the conventional name for v-model two-way binding.
-  When the parent writes v-model:collapsed="myVar", Vue wires:
-    - :collapsed="myVar"          (prop flowing down)
-    - @update:collapsed="v => myVar = v"  (event flowing up)
-*/
 defineEmits<{
   'update:collapsed': [value: boolean]
 }>()
 
 const route = useRoute()
+const router = useRouter()
+const toast = useToast()
 
-// navItems is a plain array (not reactive) because it never changes.
-// If you needed it to react to props, you'd wrap it in computed().
+// ── Logout ────────────────────────────────────────────────────────────────────
+/*
+  Same pattern as the admin sidebar.
+  After a successful logout the server clears the session cookie,
+  then we navigate back to the home page.
+*/
+const loggingOut = ref(false)
+
+async function logout() {
+  loggingOut.value = true
+  try {
+    await $fetch('/api/auth/logout', { method: 'POST' })
+    await router.push('/')
+  } catch (e: any) {
+    toast.add({
+      title: 'Erreur',
+      description: e?.data?.message ?? 'Déconnexion échouée.',
+      color: 'error',
+    })
+  } finally {
+    loggingOut.value = false
+  }
+}
+
+// ── Nav items ─────────────────────────────────────────────────────────────────
 const navItems = [
-  { to: '/user',             icon: 'i-heroicons-squares-2x2',         label: 'Tableau de bord' },
-  { to: '/user/messages',    icon: 'i-heroicons-envelope',             label: 'Mes messages' },
-  { to: '/user/testimonials', icon: 'i-heroicons-chat-bubble-left-right', label: 'Mon témoignage' },
-  { to: '/user/documents',   icon: 'i-heroicons-folder-open',          label: 'Documents' },
-  { to: '/user/profile',     icon: 'i-heroicons-user-circle',          label: 'Mon profil' },
+  { to: '/user',              icon: 'i-heroicons-squares-2x2',            label: 'Tableau de bord' },
+  { to: '/user/messages',     icon: 'i-heroicons-envelope',                label: 'Mes messages' },
+  { to: '/user/testimonials', icon: 'i-heroicons-chat-bubble-left-right',  label: 'Mon témoignage' },
+  { to: '/user/documents',    icon: 'i-heroicons-folder-open',             label: 'Documents' },
+  { to: '/user/profile',      icon: 'i-heroicons-user-circle',             label: 'Mon profil' },
 ]
 
-/*
-  isActive: returns true if the current route matches this nav item's path.
-  For /user exactly, we check for exact match (otherwise /user/messages
-  would also highlight the dashboard link).
-  For others, startsWith covers nested routes if you ever add them.
-*/
 function isActive(path: string): boolean {
-  if (path === '/users') return route.path === '/users'
+  if (path === '/user') return route.path === '/user'
   return route.path.startsWith(path)
 }
 </script>
