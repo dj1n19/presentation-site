@@ -11,14 +11,14 @@
     async function onSubmit() {
         loading.value = true
         try {
-            await $fetch('/api/auth/login', {
+            const user = await $fetch('/api/auth/login', {
                 method: 'POST',
                 body: {
                     email: state.email,
                     password: state.password
                 }
             })
-            await router.push('/admin')
+            await router.push(user.role === 'admin' ? '/admin' : '/user')
         }
         catch (e: any) {
             toast.add({

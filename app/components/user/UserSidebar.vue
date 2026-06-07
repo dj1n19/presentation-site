@@ -192,7 +192,7 @@ const route = useRoute()
 const navItems = [
   { to: '/user',             icon: 'i-heroicons-squares-2x2',         label: 'Tableau de bord' },
   { to: '/user/messages',    icon: 'i-heroicons-envelope',             label: 'Mes messages' },
-  { to: '/user/testimonial', icon: 'i-heroicons-chat-bubble-left-right', label: 'Mon témoignage' },
+  { to: '/user/testimonials', icon: 'i-heroicons-chat-bubble-left-right', label: 'Mon témoignage' },
   { to: '/user/documents',   icon: 'i-heroicons-folder-open',          label: 'Documents' },
   { to: '/user/profile',     icon: 'i-heroicons-user-circle',          label: 'Mon profil' },
 ]
@@ -204,7 +204,7 @@ const navItems = [
   For others, startsWith covers nested routes if you ever add them.
 */
 function isActive(path: string): boolean {
-  if (path === '/user') return route.path === '/user'
+  if (path === '/users') return route.path === '/users'
   return route.path.startsWith(path)
 }
 </script>

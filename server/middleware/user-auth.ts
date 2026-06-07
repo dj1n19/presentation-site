@@ -1,7 +1,7 @@
 export default defineEventHandler(async (event) => {
     const url = getRequestURL(event)
 
-    if (!url.pathname.startsWith('/user')) {
+    if (!url.pathname.startsWith('/api/user')) {
         return
     }
 

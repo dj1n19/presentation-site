@@ -8,7 +8,6 @@ export default defineEventHandler(async (event) => {
     })
 
     if (!session.data.userId) {
-        console.log("MERDE")
         throw createError({ statusCode: 401, message: "Not authenticated" })
     }
 

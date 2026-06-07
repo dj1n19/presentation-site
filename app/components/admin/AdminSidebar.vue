@@ -153,6 +153,8 @@
 </template>
 
 <script setup lang="ts">
+import LogoutButton from '../ui/LogoutButton.vue';
+
 const props = withDefaults(
   defineProps<{
     collapsed: boolean
