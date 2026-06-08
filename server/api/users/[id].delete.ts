@@ -1,17 +1,13 @@
 import { db } from '../../db/index'
 import { users } from '../../db/schema'
 import { eq } from 'drizzle-orm'
-import { z } from 'zod'
-
-const schema = z.object({
-    role: z.enum(['admin', 'user'])
-})
 
 export default defineEventHandler(async (event) => {
     const session = await useSession(event, {
         password: process.env.SESSION_SECRET!
     })
 
+    // Only admins may delete users
     if (!session.data.userId || session.data.role !== 'admin') {
         throw createError({ statusCode: 403, message: 'Access forbidden' })
     }
@@ -21,30 +17,20 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 400, message: 'Invalid ID' })
     }
 
-    // Prevent the admin from demoting themselves — that would lock them out
+    // Prevent an admin from deleting their own account
     if (id === session.data.userId) {
-        throw createError({ statusCode: 400, message: 'You cannot change your own role' })
+        throw createError({ statusCode: 400, message: 'You cannot delete your own account' })
     }
 
-    const body = await readBody(event)
-    const result = schema.safeParse(body)
-    if (!result.success) {
-        throw createError({
-            statusCode: 400,
-            message: result.error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
-        })
-    }
-
-    const [updated] = await db
-        .update(users)
-        .set({ role: result.data.role })
+    const [deleted] = await db
+        .delete(users)
         .where(eq(users.id, id))
         .returning()
 
-    if (!updated) {
+    if (!deleted) {
         throw createError({ statusCode: 404, message: 'User not found' })
     }
 
-    const { password, ...safeUser } = updated
-    return safeUser
+    // 200 with the deleted user's id so the frontend can remove it from the list
+    return { id: deleted.id }
 })

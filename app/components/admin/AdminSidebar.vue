@@ -272,6 +272,12 @@ const navItems = computed(() => [
     label: 'FAQ',
     badge: 0,
   },
+  {
+    to:    '/admin/users',
+    icon:  'i-heroicons-users',
+    label: 'Utilisateurs',
+    badge: 0,
+  }
 ])
 
 function isActive(path: string): boolean {
