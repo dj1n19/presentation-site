@@ -32,6 +32,43 @@
 								icon="i-heroicons-briefcase" class="outline-solid rounded-md p-2">
 								View Services
 							</UButton>
+
+							<!--
+								Sign In / Sign Up buttons.
+
+								These use NuxtLink instead of UButton's `to` prop so I can apply
+								exactly the Tailwind classes I want without fighting UButton's
+								default styling.
+
+								Sign In: subtle outline — doesn't compete with the main CTAs above.
+								Sign Up: slightly more prominent (dark background) to encourage
+								         new visitors to create an account.
+
+								`shrink-0` prevents the buttons from squishing on narrow screens.
+								The `flex items-center gap-2` pattern mirrors how UButton renders
+								its icon + label internally, so they look consistent.
+							-->
+							<div class="flex items-center gap-3 mt-1 w-full border-t border-gray-100 pt-4">
+								<span class="text-sm text-gray-400">Espace client :</span>
+								<NuxtLink
+									to="/auth/login"
+									class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
+									       border border-gray-300 text-gray-700 bg-white
+									       hover:bg-gray-50 hover:border-gray-400 transition-colors duration-150"
+								>
+									<UIcon name="i-heroicons-arrow-right-on-rectangle" class="w-4 h-4" />
+									Se connecter
+								</NuxtLink>
+								<NuxtLink
+									to="/auth/register"
+									class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
+									       bg-gray-900 text-white
+									       hover:bg-gray-700 transition-colors duration-150"
+								>
+									<UIcon name="i-heroicons-user-plus" class="w-4 h-4" />
+									Créer un compte
+								</NuxtLink>
+							</div>
 						</div>
 					</div>
 					<!-- RIGHT COLUMN: Profile Image Placeholder -->
@@ -194,21 +231,62 @@
 			</div>
 		</section>
 
+		<!--
+			FOOTER
+			──────
+			Three rows:
+			  1. Site map + social networks (your existing content, unchanged)
+			  2. Legal links — cookies policy and privacy policy.
+			     NuxtLink is used here because these are internal routes
+			     (defined in nuxt.config.ts as prerendered). Using <a href>
+			     would do a full page reload; NuxtLink does a client-side
+			     navigation, which is faster and consistent with the rest of
+			     the app.
+			  3. Copyright line (unchanged content, just cleaned up the year).
+		-->
 		<footer class="py-20 bg-gray-900 text-white">
 			<div class="container mx-auto px-4 text-center max-w-4xl">
-				<div class="grid grid-cols-2">
-					<div id="site-map" class="grid grid-cols-1">
+				<div class="grid grid-cols-2 mb-10">
+					<div id="site-map" class="grid grid-cols-1 gap-2 text-gray-400 text-sm">
 						<p>About Me</p>
 						<p>Services</p>
 						<p>Contact</p>
 					</div>
-					<div id="networks" class="grid grid-cols-1">
+					<div id="networks" class="grid grid-cols-1 gap-2 text-gray-400 text-sm">
 						<p>Facebook</p>
 						<p>Instagram</p>
 					</div>
 				</div>
-				<div class="copyright text-center my-8">
-					<p>Copyright 2157-3410</p>
+
+				<!--
+					Legal links row.
+					`border-t border-gray-800` visually separates this from the
+					site map above without being too heavy.
+					`text-gray-500` is intentionally dimmer than body text — these
+					are required by law but shouldn't dominate the footer visually.
+					`hover:text-gray-300` gives clear interactive feedback.
+					`underline underline-offset-2` makes it obvious these are links
+					even without color, which helps accessibility.
+				-->
+				<div class="border-t border-gray-800 pt-6 mb-4 flex flex-wrap justify-center gap-x-6 gap-y-2">
+					<NuxtLink
+						to="/cookies-policy"
+						class="text-xs text-gray-500 hover:text-gray-300 underline underline-offset-2 transition-colors duration-150"
+					>
+						Politique des cookies
+					</NuxtLink>
+					<NuxtLink
+						to="/privacy-policy"
+						class="text-xs text-gray-500 hover:text-gray-300 underline underline-offset-2 transition-colors duration-150"
+					>
+						Politique de confidentialité
+					</NuxtLink>
+				</div>
+
+				<div class="copyright text-center">
+					<p class="text-xs text-gray-600">
+						© {{ new Date().getFullYear() }} — Gestion Administrative Professionnelle
+					</p>
 				</div>
 			</div>
 		</footer>
@@ -218,30 +296,6 @@
 <script setup>
 import TestimonialForm from '~/components/ui/TestimonialForm.vue';
 
-/* 
-  SCRIPT SECTION (COMPOSITION API):
-  This is where the JavaScript logic lives. Think of it as your "main()" function.
-  
-  Vue 3 uses the Composition API (setup() function style).
-  It's more similar to functional programming than class-based (Vue 2).
-  
-  Key concepts:
-  - No need to return values - they're automatically available in template
-  - Use const for variables (like const in C++)
-  - Use ref() or reactive() for state that can change (mutable variables)
-*/
-
-// ============================================================================
-// SEO (Search Engine Optimization)
-// ============================================================================
-/*
-  useHead() is a Nuxt composable (reusable function).
-  - Composables are functions that start with "use"
-  - They're like utility functions but with special framework powers
-  
-  This sets the page <title> and <meta> tags for SEO.
-  Search engines read this to understand and rank your page.
-*/
 useHead({
 	title: 'Home | Professional Administrative Manager',
 	meta: [
@@ -252,29 +306,6 @@ useHead({
 	]
 })
 
-// ============================================================================
-// DATA STRUCTURES
-// ============================================================================
-/*
-  These are your data sources - like arrays/structs in C++.
-  
-  const = immutable reference (pointer can't change)
-  - The array reference is constant
-  - But you could mutate array contents if needed
-  
-  Similar to: const vector<Stat> stats in C++
-*/
-
-// ----------------------------------------------------------------------------
-// STRENGTHS ARRAY
-// ----------------------------------------------------------------------------
-/*
-  Array of strength objects - each has icon, title, description
-  
-  icon: string identifier for heroicons library
-  - 'i-heroicons-chart-bar' references a specific icon
-  - The library loads the actual SVG icon
-*/
 const strengths = [
 	{
 		icon: 'i-heroicons-chart-bar',
@@ -293,20 +324,11 @@ const strengths = [
 	}
 ]
 
-// ----------------------------------------------------------------------------
-// SERVICES ARRAY
-// ----------------------------------------------------------------------------
-/*
-  Array of service offerings
-  Each service has: icon, title, description
-  
-  These populate the service cards in the grid
-*/
 const services = [
 	{
 		icon: 'i-heroicons-building-library',
 		title: 'Démarches auprès des services publics',
-		description: 'Accompagnement dans les démarches communales, fiscales, sociales ou liées à l’emploi (allocations, attestations, changements de situation, etc.).'
+		description: 'Accompagnement dans les démarches communales, fiscales, sociales ou liées à l\'emploi (allocations, attestations, changements de situation, etc.).'
 	},
 	{
 		icon: 'i-heroicons-calendar',
@@ -335,15 +357,6 @@ const services = [
 	}
 ]
 
-// ----------------------------------------------------------------------------
-// TESTIMONIALS ARRAY
-// ----------------------------------------------------------------------------
-/*
-  Array of client testimonials
-  Each has: text (the quote), author (name), role (position/company)
-  
-  Social proof to build trust with potential clients
-*/
 const testimonials = [
 	{
 		text: '[Testimonial text from a satisfied client about your work and impact]',
@@ -361,112 +374,4 @@ const testimonials = [
 		role: '[Position, Company]'
 	}
 ]
-
-/*
-  IMPORTANT NOTES FOR C++ DEVELOPERS:
-  
-  1. NO SEMICOLONS NEEDED (usually):
-	 - JavaScript has automatic semicolon insertion
-	 - Most modern style guides omit them
-  
-  2. NO TYPE DECLARATIONS:
-	 - JavaScript is dynamically typed (like Python)
-	 - TypeScript adds types if you need them
-  
-  3. OBJECTS USE : NOT =
-	 - { key: value } not { key = value }
-	 - Similar to JSON format
-  
-  4. STRING LITERALS:
-	 - Can use 'single', "double", or `backticks`
-	 - Backticks allow ${variable} interpolation
-  
-  5. ARRAYS ARE DYNAMIC:
-	 - No fixed size like C++ arrays
-	 - Can grow/shrink automatically (like std::vector)
-  
-  6. THIS IS ALL CLIENT-SIDE:
-	 - Runs in the browser, not on a server
-	 - Like JavaScript in a <script> tag
-	 - Nuxt can pre-render it to HTML for speed
-*/
 </script>
-
-<style scoped>
-/*
-  STYLE SECTION (CSS):
-  
-  "scoped" means these styles ONLY apply to this component.
-  - Won't leak to other components
-  - Like having private member styles in C++
-  
-  However, we're using Tailwind CSS (utility classes in template),
-  so we rarely need custom CSS here.
-  
-  You could add custom styles if needed:
-  
-  .custom-class {
-	property: value;
-  }
-  
-  But Tailwind handles 95% of styling needs with utility classes.
-*/
-</style>
-
-<!--
-  ============================================================================
-  ARCHITECTURE OVERVIEW (for C++ developers):
-  ============================================================================
-  
-  1. COMPONENT STRUCTURE:
-	 - <template>: The view (what user sees) - like rendering code
-	 - <script>: The logic (data and functions) - like your class/functions
-	 - <style>: The styling (how it looks) - like themes/colors
-  
-  2. DATA FLOW:
-	 - Data defined in <script> (arrays/objects)
-	 - Referenced in <template> with {{ }} or v-bind
-	 - Changes to data automatically update the view (reactive)
-  
-  3. REACTIVITY:
-	 - Vue tracks data changes and updates DOM automatically
-	 - Like having automatic observers on variables
-	 - No manual DOM manipulation needed (unlike vanilla JavaScript)
-  
-  4. COMPONENTS:
-	 - UButton, UCard, UIcon are imported components
-	 - Like using library classes in C++
-	 - They encapsulate behavior and styling
-  
-  5. DIRECTIVES:
-	 - v-for: Loop directive (like for loops)
-	 - v-if: Conditional rendering (like if statements)
-	 - v-bind or :: Bind data to attributes (dynamic attributes)
-	 - @: Event handler shorthand (v-on:click → @click)
-  
-  6. ROUTING:
-	 - <NuxtLink to="/path"> creates links
-	 - Changes URL without page reload (SPA - Single Page Application)
-	 - Like switching between views in a desktop app
-  
-  7. BUILD PROCESS:
-	 - Nuxt compiles this .vue file into optimized JavaScript
-	 - Tailwind processes utility classes into minimal CSS
-	 - Result: fast, small bundle for the browser
-	 
-  8. COMPARISON TO C++:
-	 ┌─────────────────┬──────────────────────────┐
-	 │ C++ Concept     │ Vue/Web Equivalent       │
-	 ├─────────────────┼──────────────────────────┤
-	 │ struct/class    │ JavaScript object {}     │
-	 │ vector<T>       │ Array []                 │
-	 │ for loop        │ v-for directive          │
-	 │ if statement    │ v-if directive           │
-	 │ cout << x       │ {{ x }} interpolation    │
-	 │ function        │ const func = () => {}    │
-	 │ member variable │ const variable = value   │
-	 │ include library │ import from 'library'    │
-	 │ pointer         │ ref() (reactive)         │
-	 │ reference       │ const (immutable ref)    │
-	 └─────────────────┴──────────────────────────┘
--->
